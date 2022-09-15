@@ -1,0 +1,21 @@
+<div
+  class="toggle-switch-wrapper"
+  [style.--activeCircleColor]="activeCircleColor"
+  [style.--inactiveCircleColor]="inactiveCircleColor"
+  [style.--activeBackgroundColor]="activeBackgroundColor"
+  [style.--inactiveBackgroundColor]="inactiveBackgroundColor"
+  [style.--toggleHeight]="toggleHeight"
+  [style.--toggleWidth]="toggleWidth"
+>
+  <label class="toggle-switch" tabindex="-1">
+    <input
+      #inputRef
+      type="checkbox"
+      class="toggle-switch-input"
+      (change)="handleToggle()"
+      [checked]="defaultChecked"
+      [disabled]="disabled"
+    />
+    <span class="slider round"></span>
+  </label>
+</div>
