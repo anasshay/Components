@@ -1,0 +1,44 @@
+<div
+  class="auto-complete-wrapper"
+  #hostRef
+  [style.--outlineColor]="outlineColor"
+  [style.--borderColor]="borderColor"
+  [style.--width]="width"
+  [style.--font]="inputFontFamily"
+  (keydown)="handleKeydown($event)"
+>
+  <input
+    type="text"
+    class="auto-complete-input"
+    [placeholder]="placeHolder"
+    aria-label="Item"
+    [formControl]="itemCtrl"
+    id="auto-complete-input"
+    [(ngModel)]="inputText"
+    (input)="handleInputChange()"
+  />
+  <div
+    class="auto-complete-options"
+    *ngIf="inputOnFocus"
+    id="auto-complete-options"
+  >
+    <div
+      [ngClass]="activeItem === i ? 'active' : ''"
+      class="input-item"
+      *ngFor="let item of filteredItems | async; let i = index"
+      (click)="selectItem(item)"
+      #listDiv
+      [tabindex]="i === 0 ? 0 : -1"
+    >
+      <ng-container
+        *ngIf="headerTemplateRef"
+        [ngTemplateOutlet]="headerTemplateRef"
+        [ngTemplateOutletContext]="{ $implicit: item }"
+      >
+      </ng-container>
+    </div>
+    <div class="input-item-no-data" *ngIf="noDataAvailable">
+      <p>NO DATA AVAILABLE</p>
+    </div>
+  </div>
+</div>
