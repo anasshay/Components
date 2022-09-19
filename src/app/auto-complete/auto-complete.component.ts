@@ -1,4 +1,3 @@
-import { ListKeyManager } from '@angular/cdk/a11y';
 import {
   Component,
   ContentChild,
@@ -10,14 +9,9 @@ import {
   ViewChild,
   Output,
   EventEmitter,
-  QueryList,
-  ViewChildren,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 
-import { Observable, Subscription, fromEvent, merge } from 'rxjs';
-import { startWith } from 'rxjs/operators';
-import { map } from 'rxjs/operators';
+import { Observable, Subscription, fromEvent } from 'rxjs';
 import { UP_ARROW, DOWN_ARROW, ENTER, TAB } from '@angular/cdk/keycodes';
 
 export class Item {
@@ -30,8 +24,6 @@ export class Item {
   styleUrls: ['./auto-complete.component.css'],
 })
 export class AutoCompleteComponent implements OnInit, OnDestroy {
-  itemCtrl: FormControl;
-  filteredItems: Observable<any[]>;
   inputOnFocus: boolean = false;
   noDataAvailable: boolean = false;
   activeItem: number = -1;
@@ -48,33 +40,14 @@ export class AutoCompleteComponent implements OnInit, OnDestroy {
 
   @ViewChild('hostRef') hostRef!: ElementRef<HTMLDivElement>;
 
-  @ViewChildren('listDiv') listDiv!: QueryList<ElementRef>;
-
   @ContentChild('rowTemplate', { static: false }) headerTemplateRef:
     | TemplateRef<any>
     | undefined;
 
   onExternalClickSubscription = new Subscription();
   onExternalClickObservable: Observable<Event> = fromEvent(window, 'click');
-  allEvents$ = merge(this.onExternalClickObservable);
 
-  constructor() {
-    this.itemCtrl = new FormControl();
-    this.filteredItems = this.itemCtrl.valueChanges.pipe(
-      startWith(''),
-      map((inputText) => {
-        if (typeof inputText === 'object') {
-          return this.filterItems('');
-        } else if (inputText) {
-          this.noDataAvailable =
-            this.filterItems(inputText).length === 0 ? true : false;
-          return this.filterItems(inputText);
-        } else {
-          return this.dataSource;
-        }
-      })
-    );
-  }
+  constructor() {}
 
   ngOnInit(): void {
     this.initCloseOnOutsideClick();
@@ -82,6 +55,16 @@ export class AutoCompleteComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyCloseOnOutsideClick();
+  }
+
+  get filteredItems() {
+    if (this.inputText.length > 0) {
+      this.noDataAvailable =
+        this.filterItems(this.inputText).length === 0 ? true : false;
+      return this.filterItems(this.inputText);
+    } else {
+      return [];
+    }
   }
 
   filterItems(name: string) {
@@ -92,13 +75,17 @@ export class AutoCompleteComponent implements OnInit, OnDestroy {
     return filteredItems;
   }
 
+  handleInputChange() {
+    this.inputOnFocus = this.inputText !== '';
+  }
+
   selectItem(item: Item) {
     this.resetActiveItem();
     this.onSelectItem.emit(item);
   }
 
   initCloseOnOutsideClick() {
-    this.onExternalClickSubscription = this.allEvents$.subscribe(
+    this.onExternalClickSubscription = this.onExternalClickObservable.subscribe(
       (event: any) => {
         if (!this.hostRef.nativeElement.contains(event.target)) {
           this.resetActiveItem();
@@ -116,19 +103,9 @@ export class AutoCompleteComponent implements OnInit, OnDestroy {
     let activeElement = document.activeElement as HTMLElement;
 
     if (event.keyCode === DOWN_ARROW) {
-      let nextElement = activeElement?.nextElementSibling;
-
-      if (nextElement?.id === 'auto-complete-options') {
-        nextElement = nextElement.children[0];
-      }
-      if (nextElement) {
-        this.changeFocusedElement(activeElement, nextElement);
-      }
+      this.handleDownArrow(activeElement);
     } else if (event.keyCode === UP_ARROW) {
-      let previousElement = activeElement?.previousElementSibling;
-      if (previousElement) {
-        this.changeFocusedElement(activeElement, previousElement);
-      }
+      this.handleUpArrow(activeElement);
     } else if (event.keyCode === ENTER) {
       activeElement.click();
       this.resetActiveItem();
@@ -142,6 +119,22 @@ export class AutoCompleteComponent implements OnInit, OnDestroy {
     }
   }
 
+  handleDownArrow(activeElement: Element) {
+    let nextElement = activeElement?.nextElementSibling;
+    if (nextElement?.id === 'auto-complete-options') {
+      nextElement = nextElement.children[0];
+    }
+    if (nextElement) {
+      this.changeFocusedElement(activeElement, nextElement);
+    }
+  }
+  handleUpArrow(activeElement: Element) {
+    let previousElement = activeElement?.previousElementSibling;
+    if (previousElement) {
+      this.changeFocusedElement(activeElement, previousElement);
+    }
+  }
+
   changeFocusedElement(activeElement: Element, otherElement: Element) {
     let activeHtmlElement = activeElement as HTMLElement;
     activeHtmlElement.tabIndex = -1;
@@ -151,12 +144,8 @@ export class AutoCompleteComponent implements OnInit, OnDestroy {
     otherHtmlElement.focus();
   }
 
-  handleInputChange() {
-    this.inputOnFocus = this.inputText !== '';
-  }
-
   resetActiveItem(): void {
-    this.itemCtrl.patchValue('');
+    this.inputText = '';
     this.inputOnFocus = false;
     this.activeItem = -1;
   }

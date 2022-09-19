@@ -1,4 +1,4 @@
-<div style="margin: 5vh"></div>
+<!-- <div style="margin: 5vh"></div>
 <app-toggle-switch
 ></app-toggle-switch>
 <div style="margin: 5vh"></div>
@@ -44,4 +44,29 @@
 
 <div style="margin: 5vh"></div>
 
-<app-toggle-switch></app-toggle-switch>
+<app-toggle-switch></app-toggle-switch> -->
+
+<app-auto-complete [dataSource]="items" (onSelectItem)="onItemSelect($event)">
+  <ng-template let-item #rowTemplate>
+    <div style="display: flex; align-items: center; width: 100%">
+      <span [class]="'bug'" [ngClass]="'span-pic'"></span>
+      <span>{{ item.name }}</span>
+    </div>
+  </ng-template>
+</app-auto-complete>
+<app-auto-complete [dataSource]="items" (onSelectItem)="onItemSelect($event)">
+  <ng-template let-item #rowTemplate>
+    <div style="display: flex; align-items: center; width: 100%">
+      <span [class]="'bug'" [ngClass]="'span-pic'"></span>
+      <span>{{ item.name }}</span>
+    </div>
+  </ng-template>
+</app-auto-complete>
+<app-auto-complete [dataSource]="items" (onSelectItem)="onItemSelect($event)">
+  <ng-template let-item #rowTemplate>
+    <div style="display: flex; align-items: center; width: 100%">
+      <span [class]="'bug'" [ngClass]="'span-pic'"></span>
+      <span>{{ item.name }}</span>
+    </div>
+  </ng-template>
+</app-auto-complete>

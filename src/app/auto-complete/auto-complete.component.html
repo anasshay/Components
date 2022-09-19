@@ -12,7 +12,6 @@
     class="auto-complete-input"
     [placeholder]="placeHolder"
     aria-label="Item"
-    [formControl]="itemCtrl"
     id="auto-complete-input"
     [(ngModel)]="inputText"
     (input)="handleInputChange()"
@@ -23,11 +22,9 @@
     id="auto-complete-options"
   >
     <div
-      [ngClass]="activeItem === i ? 'active' : ''"
       class="input-item"
-      *ngFor="let item of filteredItems | async; let i = index"
+      *ngFor="let item of filteredItems; let i = index"
       (click)="selectItem(item)"
-      #listDiv
       [tabindex]="i === 0 ? 0 : -1"
     >
       <ng-container
