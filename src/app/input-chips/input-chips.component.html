@@ -1,0 +1,20 @@
+<div class="selected-chips-container">
+  <div *ngFor="let tag of selectedValues" class="btn btn-info">
+    {{ tag.title }}
+    <button class="close-icon" #iconRef>
+      <fa-icon
+        [icon]="faTimes"
+        (click)="removeTag(tag)"
+        (keydown.enter)="removeTag(tag)"
+      ></fa-icon>
+    </button>
+  </div>
+</div>
+
+<div>
+  <div *ngFor="let tag of dataSource">
+    <div *ngIf="!selectedValues.includes(tag)" (click)="addTag(tag)">
+      {{ tag.title }}
+    </div>
+  </div>
+</div>
