@@ -1,5 +1,22 @@
 .selected-chips-container {
+  //////////////////////////
   border: 1px solid black;
+  //////////////////////////
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+
+  .mini-chip {
+    background-color: brown;
+    width: fit-content;
+    padding: 7px 5px;
+  }
+  .large-chip {
+    background-color: royalblue;
+    width: fit-content;
+  }
 }
 
 .close-icon {

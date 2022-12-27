@@ -11,58 +11,48 @@ export class InputChipsComponent implements OnInit {
   faTimes = faTimes;
 
   private _selectedValues: Tag[] = [];
-  selectedValuesArgsData: {
-    selectedItems: Tag[];
-    lastSelectedItem: Tag | null;
-  } = { selectedItems: [], lastSelectedItem: null };
 
   @Input('dataSource') dataSource: Tag[] = [];
   @Input('miniChips') miniChips: boolean = false;
   @Input('selectedValues') set selectedValues(values: number[]) {
-    this._selectedValues = this.updateSelectedChips(values);
-    console.log(this._selectedValues);
+    this.updateSelectedChips(values);
   }
   get selectedValues(): any[] {
     return this._selectedValues;
   }
 
-  @Output('selectedValuesArgs') selectedValuesArgs: EventEmitter<{
-    selectedItems: Tag[];
-    lastSelectedItem: Tag;
-  }> = new EventEmitter();
+  @Output('select') select: EventEmitter<Tag> = new EventEmitter();
+  @Output('remove') remove: EventEmitter<Tag> = new EventEmitter();
+  @Output('clearAll') clearAll: EventEmitter<Tag[]> = new EventEmitter();
 
   constructor() {}
 
   ngOnInit(): void {}
 
-  updateSelectedChips(values: number[]): Tag[] {
+  updateSelectedChips(values: number[]): void {
     let updatedTags: Tag[] = [];
-    let lastSelected: Tag | null = null;
     this.dataSource.forEach((tag: Tag) => {
       if (values.includes(tag.id)) {
-        lastSelected = null;
         updatedTags.push(tag);
-        lastSelected = tag;
       }
     });
-    this.selectedValuesArgsData.selectedItems.push(...updatedTags);
-    this.selectedValuesArgsData.lastSelectedItem = lastSelected;
-    return this.selectedValuesArgsData.selectedItems;
+    this._selectedValues.push(...updatedTags);
   }
 
   addTag(tag: Tag) {
     this.updateSelectedChips([tag.id]);
-    this.selectedValuesArgs.emit(this.selectedValuesArgsData);
+    this.select.emit(tag);
   }
+
   removeTag(tag: Tag) {
-    let tagIndex = this.selectedValuesArgsData.selectedItems.findIndex(
-      (t: Tag) => {
-        return t.id === tag.id;
-      }
-    );
-    this.selectedValuesArgsData.selectedItems.splice(tagIndex, 1);
-    console.log('remove: ', tag);
-    console.log(this.selectedValuesArgsData);
+    let tagIndex = this._selectedValues.findIndex((t: Tag) => {
+      return t.id === tag.id;
+    });
+    this._selectedValues.splice(tagIndex, 1);
   }
-  clearAllTags() {}
+
+  clearAllTags() {
+    this._selectedValues = [];
+    this.clearAll.emit(this.selectedValues);
+  }
 }

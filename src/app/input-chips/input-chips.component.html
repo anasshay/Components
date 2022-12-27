@@ -1,14 +1,37 @@
 <div class="selected-chips-container">
-  <div *ngFor="let tag of selectedValues" class="btn btn-info">
-    {{ tag.title }}
-    <button class="close-icon" #iconRef>
-      <fa-icon
-        [icon]="faTimes"
-        (click)="removeTag(tag)"
-        (keydown.enter)="removeTag(tag)"
-      ></fa-icon>
-    </button>
-  </div>
+  <ng-container *ngIf="!miniChips">
+    <div *ngFor="let tag of selectedValues" class="large-chip">
+      <span [title]="tag.title">{{ tag.title }}</span>
+      <button class="close-icon" #iconRef>
+        <fa-icon
+          [icon]="faTimes"
+          (click)="removeTag(tag)"
+          (keydown.enter)="removeTag(tag)"
+        ></fa-icon>
+      </button>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="miniChips">
+    <div *ngFor="let tag of selectedValues" class="mini-chip">
+      <span [title]="tag.title">{{ tag.title }}</span>
+      <button class="close-icon" #iconRef>
+        <fa-icon
+          [icon]="faTimes"
+          (click)="removeTag(tag)"
+          (keydown.enter)="removeTag(tag)"
+        ></fa-icon>
+      </button>
+    </div>
+  </ng-container>
+
+  <button class="close-icon">
+    <fa-icon
+      [icon]="faTimes"
+      (click)="clearAllTags()"
+      (keydown.enter)="clearAllTags()"
+    ></fa-icon>
+  </button>
 </div>
 
 <div>
